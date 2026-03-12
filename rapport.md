@@ -1,4 +1,6 @@
-_# MA_WEM Labo 1
+# MA_WEM - Labo 1
+
+Auteurs : Cardoso Rafael, Maksimous Thomas et Manzini Kylian
 
 ## 2.1 : Éléments scrappé
 
