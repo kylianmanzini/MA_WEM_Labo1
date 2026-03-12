@@ -32,6 +32,16 @@ Elasticsearch permet d’accorder plus d’importance à certains champs grâce 
 Références 
 - https://www.elastic.co/docs/reference/query-languages/querydsl
 
+## 2.4.1 : Stratégies d’indexation multilingue
+
+Dans notre cas, le corpus contient des pages Wikipedia en français et en anglais, mais chaque page est monolingue. Lorsqu’on indexe du texte, Elasticsearch applique un analyzer qui réalise la tokenisation, le stemming et la suppression des stop words, et ces traitements sont propres à chaque langue. Par exemple, l’analyzer `french` ramène « chevaux » à « cheval », alors que l’analyzer `english` ramène « running » à « run ». Il est donc crucial d’appliquer à chaque document l’analyzer correspondant à sa langue, sous peine de dégrader fortement la pertinence des recherches.
+
+Plusieurs stratégies sont possibles. La plus naturelle dans le contexte de notre labo consiste à créer un index par langue (par exemple `wikipedia_fr` et `wikipedia_en`), chacun configuré avec l’analyzer approprié. Grâce au sous-domaine de l’URL (`fr.wikipedia.org` ou `en.wikipedia.org`), la détection de la langue est triviale et chaque page peut être routée vers l’index correspondant. Lors d’une requête, il suffit alors d’interroger les deux index en parallèle. Cette approche garantit une analyse optimale pour chaque langue et une bonne qualité de recherche, au prix d’une gestion de plusieurs index. D’autres approches, comme l’utilisation d’un unique index avec des champs multi-langues, sont possibles mais plus complexes à maintenir. C’est pourquoi, pour ce laboratoire, nous retenons la solution « un index par langue », simple à mettre en œuvre et bien adaptée à un corpus bilingue.
+
+Références
+- https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html
+- https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-fields.html
+
 ## 2.4.2 Fuzzy Query
 
 La recherche floue (fuzzy query) dans Elasticsearch permet de retrouver des documents contenant des termes proches du terme recherché, même lorsqu’il existe de légères différences orthographiques. Elle repose sur la distance d’édition de Levenshtein, c’est-à-dire le nombre minimal de modifications nécessaires pour transformer un mot en un autre : ajout, suppression, remplacement ou inversion de caractères. Dans notre cas, nous avons testé ce mécanisme dans le fichier fuzzysearch.py.
